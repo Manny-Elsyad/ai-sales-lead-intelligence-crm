@@ -50,5 +50,22 @@ html, body, [class*="css"]  {
     background: rgba(13, 24, 45, 0.75);
     padding: 0.35rem;
 }
+
+.pipeline-stage {
+    background: linear-gradient(150deg, rgba(12, 22, 41, 0.95), rgba(19, 33, 59, 0.90));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.lead-card {
+    background: rgba(21, 37, 67, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-left: 4px solid #23A6D5;
+    border-radius: 10px;
+    padding: 0.55rem;
+    margin: 0.35rem 0;
+}
 </style>
 """

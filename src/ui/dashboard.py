@@ -3,10 +3,21 @@ import streamlit as st
 
 from src.data.loader import load_leads
 from src.outreach.generator import generate_outreach_for_lead
+from src.pipeline.service import (
+    CRM_STAGE_ORDER,
+    add_crm_stage,
+    average_lead_score_by_stage,
+    group_leads_by_crm_stage,
+    pipeline_summary_metrics,
+)
 from src.scoring.engine import score_leads
 from src.scoring.metrics import apply_pipeline_probability, summarize_kpis
 from src.ui.theme import DARK_THEME_CSS
-from src.visualizations.charts import lead_score_distribution_chart, pipeline_by_stage_chart
+from src.visualizations.charts import (
+    lead_score_distribution_chart,
+    pipeline_by_stage_chart,
+    pipeline_funnel_chart,
+)
 
 
 st.set_page_config(
@@ -26,8 +37,8 @@ def _apply_filters(df: pd.DataFrame) -> pd.DataFrame:
     )
     stages = st.sidebar.multiselect(
         "Stage",
-        options=["New", "Qualified", "Proposal", "Negotiation"],
-        default=["New", "Qualified", "Proposal", "Negotiation"],
+        options=sorted(df["stage"].unique()),
+        default=sorted(df["stage"].unique()),
     )
     owners = st.sidebar.multiselect(
         "Lead Owner",
@@ -51,6 +62,22 @@ def _render_kpis(kpis: dict[str, float]) -> None:
     with c1:
         st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Total Leads", f"{kpis['total_leads']:,}")
+        st.markdown("</div>", unsafe_allow_html=True)
+    with c2:
+        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
+        st.metric("Pipeline", f"${kpis['total_pipeline']:,.0f}")
+        st.markdown("</div>", unsafe_allow_html=True)
+    with c3:
+        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
+        st.metric("Weighted Pipeline", f"${kpis['weighted_pipeline']:,.0f}")
+        st.markdown("</div>", unsafe_allow_html=True)
+    with c4:
+        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
+        st.metric("Avg Lead Score", f"{kpis['avg_lead_score']:.1f}")
+        st.markdown("</div>", unsafe_allow_html=True)
+    with c5:
+        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
+        st.metric("Hot Leads", f"{kpis['hot_leads']:,}")
         st.markdown("</div>", unsafe_allow_html=True)
 
 
@@ -91,22 +118,68 @@ def _render_outreach_generator(df: pd.DataFrame) -> None:
     with lc2:
         st.markdown("**Follow-up Message**")
         st.text_area("Generated Follow-up", value=generated["follow_up_message"], height=140)
-    with c2:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Pipeline", f"${kpis['total_pipeline']:,.0f}")
-        st.markdown("</div>", unsafe_allow_html=True)
-    with c3:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Weighted Pipeline", f"${kpis['weighted_pipeline']:,.0f}")
-        st.markdown("</div>", unsafe_allow_html=True)
-    with c4:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Avg Lead Score", f"{kpis['avg_lead_score']:.1f}")
-        st.markdown("</div>", unsafe_allow_html=True)
-    with c5:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Hot Leads", f"{kpis['hot_leads']:,}")
-        st.markdown("</div>", unsafe_allow_html=True)
+
+
+def _render_lead_card(row: pd.Series) -> None:
+    st.markdown(
+        f"""
+        <div class='lead-card'>
+            <div><strong>{row['company']}</strong></div>
+            <div style='font-size:0.85rem; opacity:0.9;'>{row['industry']}</div>
+            <div style='font-size:0.85rem;'>Score: {int(row['lead_score'])} ({row['lead_label']})</div>
+            <div style='font-size:0.85rem;'>Deal: ${row['deal_value']:,.0f}</div>
+            <div style='font-size:0.85rem;'>Urgency: {row['urgency_level']}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_crm_pipeline(df: pd.DataFrame) -> None:
+    st.subheader("CRM Pipeline")
+
+    crm_df = add_crm_stage(df)
+    summary = pipeline_summary_metrics(crm_df)
+    stage_scores = average_lead_score_by_stage(crm_df)
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Total Pipeline Value", f"${summary['total_pipeline_value']:,.0f}")
+    c2.metric("Qualified Pipeline Value", f"${summary['qualified_pipeline_value']:,.0f}")
+    c3.metric("Won Value", f"${summary['won_value']:,.0f}")
+
+    st.plotly_chart(pipeline_funnel_chart(crm_df), use_container_width=True)
+
+    st.markdown("**Average Lead Score by Stage**")
+    st.dataframe(
+        stage_scores,
+        hide_index=True,
+        use_container_width=True,
+        column_config={
+            "crm_stage": st.column_config.TextColumn("CRM Stage"),
+            "avg_lead_score": st.column_config.NumberColumn("Avg Lead Score", format="%.1f"),
+        },
+    )
+
+    grouped = group_leads_by_crm_stage(crm_df)
+    stage_columns = st.columns(len(CRM_STAGE_ORDER))
+
+    for index, stage in enumerate(CRM_STAGE_ORDER):
+        stage_df = grouped[stage]
+        with stage_columns[index]:
+            st.markdown(
+                f"""
+                <div class='pipeline-stage'>
+                    <strong>{stage}</strong><br/>
+                    <span style='opacity:0.8'>{len(stage_df)} leads</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            if stage_df.empty:
+                st.caption("No leads")
+            else:
+                for _, row in stage_df.iterrows():
+                    _render_lead_card(row)
 
 
 def render_dashboard() -> None:
@@ -180,3 +253,4 @@ def render_dashboard() -> None:
 
     st.caption(f"Showing {len(display_df)} leads after filters.")
     _render_outreach_generator(filtered_leads)
+    _render_crm_pipeline(filtered_leads)
