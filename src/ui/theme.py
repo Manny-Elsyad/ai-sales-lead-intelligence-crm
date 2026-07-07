@@ -202,3 +202,154 @@ html, body, [class*="css"]  {
 }
 </style>
 """
+
+
+COPILOT_THEME_CSS = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+html, body, [class*="css"]  {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.stApp {
+    background: linear-gradient(135deg, #101318 0%, #181B22 52%, #0F1217 100%);
+    color: #F4F7FB;
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, rgba(13, 17, 23, 0.98), rgba(20, 25, 33, 0.96));
+    border-right: 1px solid rgba(73, 214, 194, 0.18);
+}
+
+.block-container {
+    padding-top: 1.3rem;
+    padding-bottom: 2rem;
+    max-width: 1380px;
+}
+
+.copilot-header {
+    border-bottom: 1px solid rgba(73, 214, 194, 0.24);
+    padding: 0.2rem 0 1rem 0;
+    margin-bottom: 1rem;
+}
+
+.copilot-eyebrow {
+    color: #49D6C2;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.copilot-header h1 {
+    font-size: 2.3rem;
+    margin: 0.15rem 0 0.2rem;
+    letter-spacing: 0;
+}
+
+.copilot-header p {
+    color: rgba(244, 247, 251, 0.72);
+    margin: 0;
+    max-width: 840px;
+}
+
+.ai-card {
+    min-height: 188px;
+    background: linear-gradient(150deg, rgba(26, 31, 40, 0.98), rgba(17, 21, 29, 0.96));
+    border: 1px solid rgba(73, 214, 194, 0.20);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.ai-card-title {
+    color: rgba(244, 247, 251, 0.72);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.ai-card-answer {
+    color: #F4F7FB;
+    font-size: 1rem;
+    line-height: 1.48;
+    margin-top: 0.55rem;
+}
+
+.ai-card-rationale {
+    color: rgba(244, 247, 251, 0.58);
+    font-size: 0.84rem;
+    margin-top: 0.7rem;
+}
+
+.confidence {
+    margin-top: 0.85rem;
+    height: 8px;
+    background: rgba(244, 247, 251, 0.10);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 8px;
+    background: linear-gradient(90deg, #4D96FF, #49D6C2);
+    border-radius: 999px;
+}
+
+.confidence-label {
+    color: rgba(244, 247, 251, 0.64);
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+}
+
+.signal-card {
+    background: rgba(22, 27, 36, 0.92);
+    border: 1px solid rgba(244, 247, 251, 0.10);
+    border-radius: 8px;
+    padding: 0.9rem;
+    min-height: 100px;
+}
+
+.signal-label {
+    color: rgba(244, 247, 251, 0.58);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.signal-value {
+    color: #F4F7FB;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-top: 0.35rem;
+}
+
+.copilot-panel {
+    background: rgba(22, 27, 36, 0.92);
+    border: 1px solid rgba(244, 247, 251, 0.10);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.objection-row {
+    border-bottom: 1px solid rgba(244, 247, 251, 0.10);
+    padding: 0.8rem 0;
+}
+
+.objection-row:last-child {
+    border-bottom: 0;
+}
+
+.objection-title {
+    color: #49D6C2;
+    font-weight: 700;
+}
+
+.objection-response {
+    color: rgba(244, 247, 251, 0.72);
+    margin-top: 0.18rem;
+}
+</style>
+"""
