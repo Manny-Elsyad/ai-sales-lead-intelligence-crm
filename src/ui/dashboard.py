@@ -2,9 +2,10 @@ import pandas as pd
 import streamlit as st
 
 from src.data.loader import load_leads
+from src.scoring.engine import score_leads
 from src.scoring.metrics import apply_pipeline_probability, summarize_kpis
 from src.ui.theme import DARK_THEME_CSS
-from src.visualizations.charts import pipeline_by_stage_chart
+from src.visualizations.charts import lead_score_distribution_chart, pipeline_by_stage_chart
 
 
 st.set_page_config(
@@ -44,7 +45,7 @@ def _apply_filters(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _render_kpis(kpis: dict[str, float]) -> None:
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
         st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
@@ -62,6 +63,10 @@ def _render_kpis(kpis: dict[str, float]) -> None:
         st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Avg Lead Score", f"{kpis['avg_lead_score']:.1f}")
         st.markdown("</div>", unsafe_allow_html=True)
+    with c5:
+        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
+        st.metric("Hot Leads", f"{kpis['hot_leads']:,}")
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def render_dashboard() -> None:
@@ -77,6 +82,7 @@ def render_dashboard() -> None:
     )
 
     leads = load_leads()
+    leads = score_leads(leads)
     leads = apply_pipeline_probability(leads)
     filtered_leads = _apply_filters(leads)
     kpis = summarize_kpis(filtered_leads)
@@ -84,8 +90,13 @@ def render_dashboard() -> None:
     _render_kpis(kpis)
 
     st.subheader("Pipeline Analytics")
-    stage_fig = pipeline_by_stage_chart(filtered_leads)
-    st.plotly_chart(stage_fig, use_container_width=True)
+    chart_col_1, chart_col_2 = st.columns(2)
+    with chart_col_1:
+        stage_fig = pipeline_by_stage_chart(filtered_leads)
+        st.plotly_chart(stage_fig, use_container_width=True)
+    with chart_col_2:
+        score_fig = lead_score_distribution_chart(filtered_leads)
+        st.plotly_chart(score_fig, use_container_width=True)
 
     st.subheader("Lead Portfolio")
     table_columns = [
@@ -97,9 +108,13 @@ def render_dashboard() -> None:
         "stage",
         "deal_value",
         "lead_score",
+        "lead_label",
         "weighted_value",
         "last_contact_date",
         "next_step",
+        "score_explanation",
+        "strongest_positive_signals",
+        "biggest_risks",
     ]
 
     display_df = filtered_leads[table_columns].sort_values(
@@ -114,8 +129,12 @@ def render_dashboard() -> None:
         column_config={
             "deal_value": st.column_config.NumberColumn("Deal Value", format="$%d"),
             "weighted_value": st.column_config.NumberColumn("Weighted Value", format="$%d"),
-            "lead_score": st.column_config.NumberColumn("Lead Score", format="%.1f"),
+            "lead_score": st.column_config.NumberColumn("Lead Score", format="%d"),
             "last_contact_date": st.column_config.DateColumn("Last Contact"),
+            "lead_label": st.column_config.TextColumn("Score Label"),
+            "score_explanation": st.column_config.TextColumn("Score Summary"),
+            "strongest_positive_signals": st.column_config.TextColumn("Positive Signals"),
+            "biggest_risks": st.column_config.TextColumn("Risks"),
         },
     )
 

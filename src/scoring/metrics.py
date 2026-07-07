@@ -1,6 +1,9 @@
 import pandas as pd
 
 
+HOT_LEAD_LABEL = "Hot Lead"
+
+
 PROBABILITY_BY_STAGE = {
     "New": 0.12,
     "Qualified": 0.35,
@@ -23,9 +26,11 @@ def summarize_kpis(df: pd.DataFrame) -> dict[str, float]:
     total_pipeline = float(df["deal_value"].sum())
     weighted_pipeline = float(df["weighted_value"].sum())
     avg_lead_score = float(df["lead_score"].mean())
+    hot_leads = int((df["lead_label"] == HOT_LEAD_LABEL).sum())
     return {
         "total_leads": total_leads,
         "total_pipeline": total_pipeline,
         "weighted_pipeline": weighted_pipeline,
         "avg_lead_score": avg_lead_score,
+        "hot_leads": hot_leads,
     }
