@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from src.data.loader import load_leads
+from src.outreach.generator import generate_outreach_for_lead
 from src.scoring.engine import score_leads
 from src.scoring.metrics import apply_pipeline_probability, summarize_kpis
 from src.ui.theme import DARK_THEME_CSS
@@ -51,6 +52,45 @@ def _render_kpis(kpis: dict[str, float]) -> None:
         st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Total Leads", f"{kpis['total_leads']:,}")
         st.markdown("</div>", unsafe_allow_html=True)
+
+
+def _render_outreach_generator(df: pd.DataFrame) -> None:
+    st.subheader("Outreach Generator")
+
+    if df.empty:
+        st.info("No leads available with current filters. Adjust filters to generate outreach copy.")
+        return
+
+    selector_df = df.sort_values(by=["lead_score", "deal_value"], ascending=[False, False])
+    lead_options = [
+        f"{row.lead_id} | {row.company} | {row.lead_label} ({int(row.lead_score)})"
+        for row in selector_df.itertuples(index=False)
+    ]
+
+    c1, c2 = st.columns([2, 1])
+    with c1:
+        selected_label = st.selectbox("Select Lead", options=lead_options, index=0)
+    with c2:
+        tone = st.selectbox("Tone", options=["Professional", "Friendly", "Executive"], index=0)
+
+    selected_lead_id = selected_label.split(" | ")[0]
+    selected_lead = selector_df.loc[selector_df["lead_id"] == selected_lead_id].iloc[0]
+
+    generated = generate_outreach_for_lead(selected_lead, tone=tone)
+
+    st.markdown("**Subject Line**")
+    st.code(generated["subject_line"], language="text")
+
+    st.markdown("**Short Email**")
+    st.text_area("Generated Email", value=generated["short_email"], height=180)
+
+    lc1, lc2 = st.columns(2)
+    with lc1:
+        st.markdown("**LinkedIn Message**")
+        st.text_area("Generated LinkedIn", value=generated["linkedin_message"], height=140)
+    with lc2:
+        st.markdown("**Follow-up Message**")
+        st.text_area("Generated Follow-up", value=generated["follow_up_message"], height=140)
     with c2:
         st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Pipeline", f"${kpis['total_pipeline']:,.0f}")
@@ -139,3 +179,4 @@ def render_dashboard() -> None:
     )
 
     st.caption(f"Showing {len(display_df)} leads after filters.")
+    _render_outreach_generator(filtered_leads)
