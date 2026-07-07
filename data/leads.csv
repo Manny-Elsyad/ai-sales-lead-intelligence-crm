@@ -1,0 +1,25 @@
+lead_id,company,industry,region,company_size,annual_revenue_m,lead_owner,stage,deal_value,engagement_score,fit_score,last_contact_date,next_step,source,days_in_pipeline
+L-1001,ApexGrid Logistics,Logistics,North America,Mid-Market,48,Jordan Kim,Qualified,78000,82,76,2026-07-01,Technical discovery call,Referral,21
+L-1002,NovaMed Systems,Healthcare,North America,Enterprise,210,Taylor Reed,Proposal,165000,74,88,2026-07-03,Legal review draft,Inbound,46
+L-1003,QuantaForge Security,Cybersecurity,Europe,SMB,19,Alex Rivera,New,42000,63,69,2026-06-29,Initial outreach email,Outbound,9
+L-1004,BluePeak Retail Cloud,Retail,North America,Mid-Market,67,Morgan Lee,Negotiation,132000,91,84,2026-07-02,Pricing alignment meeting,Event,58
+L-1005,FinSight Capital Tech,FinTech,Europe,Enterprise,310,Jamie Patel,Proposal,240000,79,93,2026-07-04,Procurement package,Partner,39
+L-1006,HelioWorks Manufacturing,Manufacturing,APAC,Mid-Market,95,Jordan Kim,Qualified,98000,68,81,2026-06-30,Demo with operations team,Outbound,27
+L-1007,VerdePulse Energy,Energy,North America,Enterprise,420,Taylor Reed,Negotiation,275000,86,90,2026-07-05,Executive sponsor briefing,Referral,63
+L-1008,SparkBridge HR Tech,HR Tech,Europe,SMB,24,Alex Rivera,New,36000,57,66,2026-06-28,Follow-up sequence,Inbound,12
+L-1009,AtlasCore Biotech,Biotech,North America,Mid-Market,112,Morgan Lee,Qualified,118000,77,80,2026-07-01,Product fit workshop,Event,33
+L-1010,StrideOne Mobility,Transportation,APAC,Enterprise,290,Jamie Patel,Proposal,205000,72,86,2026-07-03,Security questionnaire,Outbound,41
+L-1011,CloudMason Construction,Construction,North America,Mid-Market,54,Jordan Kim,New,51000,60,73,2026-06-27,Discovery qualification,Inbound,14
+L-1012,Northline Telecom,Telecom,Europe,Enterprise,360,Taylor Reed,Negotiation,255000,88,91,2026-07-04,Final redlines,Partner,67
+L-1013,OrbitIQ Aerospace,Aerospace,North America,Enterprise,510,Morgan Lee,Qualified,190000,83,87,2026-07-05,Architecture review,Event,36
+L-1014,Meridian LegalOps,Legal Tech,Europe,SMB,31,Alex Rivera,New,47000,64,71,2026-06-30,Case study send,Outbound,11
+L-1015,FlowHarvest AgriTech,AgriTech,APAC,Mid-Market,72,Jamie Patel,Proposal,121000,70,78,2026-07-02,Budget confirmation,Referral,32
+L-1016,SentinelNet Insurance,Insurance,North America,Enterprise,330,Jordan Kim,Negotiation,228000,85,89,2026-07-05,Mutual action plan,Inbound,60
+L-1017,PulseLayer EdTech,EdTech,Europe,Mid-Market,61,Taylor Reed,Qualified,89000,76,75,2026-07-01,Stakeholder mapping,Event,24
+L-1018,UrbanScale Real Estate,Real Estate,North America,SMB,28,Alex Rivera,New,39000,55,68,2026-06-26,Re-engagement touchpoint,Outbound,16
+L-1019,ArcNova Pharma,Pharmaceuticals,APAC,Enterprise,460,Morgan Lee,Proposal,312000,81,94,2026-07-03,Compliance package,Partner,44
+L-1020,SilverThread Fashion,Retail,Europe,Mid-Market,84,Jamie Patel,Qualified,104000,73,79,2026-07-02,Pilot design session,Inbound,29
+L-1021,CoreForge Industrial IoT,Manufacturing,North America,Enterprise,275,Jordan Kim,Negotiation,245000,87,88,2026-07-04,Commercial terms review,Referral,55
+L-1022,LumenBank Digital,FinTech,Europe,Enterprise,390,Taylor Reed,Proposal,268000,80,92,2026-07-05,Risk sign-off,Outbound,48
+L-1023,PrismWave Media,Media,APAC,SMB,22,Alex Rivera,New,35000,58,65,2026-06-29,Discovery booking,Inbound,10
+L-1024,HarborTech Maritime,Logistics,Europe,Mid-Market,76,Morgan Lee,Qualified,97000,75,82,2026-07-01,Solution walkthrough,Event,26
