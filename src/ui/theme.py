@@ -353,3 +353,244 @@ html, body, [class*="css"]  {
 }
 </style>
 """
+
+
+WORKSPACE_THEME_CSS = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+html, body, [class*="css"]  {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.stApp {
+    background: linear-gradient(135deg, #0E1117 0%, #151A22 48%, #0B0F15 100%);
+    color: #EEF4F8;
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, rgba(12, 16, 23, 0.98), rgba(18, 23, 32, 0.96));
+    border-right: 1px solid rgba(89, 164, 255, 0.16);
+}
+
+.block-container {
+    padding-top: 1.2rem;
+    padding-bottom: 2rem;
+    max-width: 1500px;
+}
+
+.workspace-header {
+    border-bottom: 1px solid rgba(89, 164, 255, 0.20);
+    padding: 0.2rem 0 1rem;
+    margin-bottom: 1rem;
+}
+
+.workspace-eyebrow {
+    color: #59A4FF;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.workspace-header h1 {
+    font-size: 2.25rem;
+    margin: 0.15rem 0 0.2rem;
+    letter-spacing: 0;
+}
+
+.workspace-header p {
+    color: rgba(238, 244, 248, 0.72);
+    margin: 0;
+    max-width: 900px;
+}
+
+.workspace-panel {
+    background: rgba(21, 27, 37, 0.94);
+    border: 1px solid rgba(238, 244, 248, 0.10);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.lead-summary {
+    background: linear-gradient(150deg, rgba(31, 39, 52, 0.98), rgba(18, 23, 32, 0.98));
+    border: 1px solid rgba(89, 164, 255, 0.18);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.9rem;
+}
+
+.lead-summary h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.45rem;
+}
+
+.muted {
+    color: rgba(238, 244, 248, 0.62);
+}
+
+.badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.75rem;
+}
+
+.badge {
+    border: 1px solid rgba(238, 244, 248, 0.12);
+    border-radius: 999px;
+    color: #EEF4F8;
+    background: rgba(89, 164, 255, 0.12);
+    padding: 0.28rem 0.58rem;
+    font-size: 0.78rem;
+}
+
+.metric-card {
+    min-height: 104px;
+    background: rgba(17, 22, 31, 0.94);
+    border: 1px solid rgba(238, 244, 248, 0.10);
+    border-radius: 8px;
+    padding: 0.8rem;
+}
+
+.metric-label {
+    color: rgba(238, 244, 248, 0.58);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    color: #EEF4F8;
+    font-size: 1.22rem;
+    font-weight: 700;
+    margin-top: 0.35rem;
+}
+
+.progress {
+    height: 8px;
+    background: rgba(238, 244, 248, 0.10);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.65rem;
+}
+
+.progress-fill {
+    height: 8px;
+    background: linear-gradient(90deg, #59A4FF, #55D6BE);
+    border-radius: 999px;
+}
+
+.intel-card {
+    background: rgba(17, 22, 31, 0.94);
+    border: 1px solid rgba(85, 214, 190, 0.16);
+    border-radius: 8px;
+    padding: 0.9rem;
+    min-height: 154px;
+}
+
+.intel-title {
+    color: #55D6BE;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.intel-body {
+    color: rgba(238, 244, 248, 0.82);
+    margin-top: 0.55rem;
+    line-height: 1.45;
+}
+
+.field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.field {
+    background: rgba(13, 18, 26, 0.64);
+    border: 1px solid rgba(238, 244, 248, 0.08);
+    border-radius: 8px;
+    padding: 0.72rem;
+}
+
+.field-label {
+    color: rgba(238, 244, 248, 0.54);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.field-value {
+    color: #EEF4F8;
+    font-weight: 700;
+    margin-top: 0.22rem;
+}
+
+.outreach-box {
+    background: rgba(13, 18, 26, 0.68);
+    border: 1px solid rgba(238, 244, 248, 0.08);
+    border-radius: 8px;
+    padding: 0.85rem;
+    margin-bottom: 0.65rem;
+}
+
+.outreach-title {
+    color: rgba(238, 244, 248, 0.60);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.outreach-copy {
+    color: rgba(238, 244, 248, 0.84);
+    margin-top: 0.38rem;
+    white-space: pre-wrap;
+    line-height: 1.42;
+}
+
+.action-item {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(238, 244, 248, 0.08);
+    padding: 0.72rem 0;
+}
+
+.action-item:last-child {
+    border-bottom: 0;
+}
+
+.action-index {
+    color: #0E1117;
+    background: #55D6BE;
+    border-radius: 999px;
+    min-width: 1.65rem;
+    height: 1.65rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.action-copy {
+    color: rgba(238, 244, 248, 0.82);
+    line-height: 1.42;
+}
+
+[data-testid="stRadio"] label {
+    background: rgba(17, 22, 31, 0.88);
+    border: 1px solid rgba(238, 244, 248, 0.10);
+    border-radius: 8px;
+    padding: 0.45rem 0.55rem;
+    margin-bottom: 0.42rem;
+}
+
+[data-testid="stRadio"] label:hover {
+    border-color: rgba(89, 164, 255, 0.42);
+}
+</style>
+"""
