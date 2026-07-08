@@ -594,3 +594,414 @@ html, body, [class*="css"]  {
 }
 </style>
 """
+
+
+PREMIUM_SAAS_CSS = """
+<style>
+:root {
+    --saas-bg: #0B0F15;
+    --saas-panel: rgba(17, 24, 39, 0.86);
+    --saas-panel-strong: rgba(21, 30, 44, 0.95);
+    --saas-border: rgba(226, 232, 240, 0.11);
+    --saas-border-strong: rgba(96, 165, 250, 0.28);
+    --saas-text: #F8FAFC;
+    --saas-muted: rgba(226, 232, 240, 0.66);
+    --saas-faint: rgba(226, 232, 240, 0.46);
+    --saas-blue: #60A5FA;
+    --saas-green: #34D399;
+    --saas-amber: #FBBF24;
+    --saas-red: #FB7185;
+    --saas-purple: #A78BFA;
+    --saas-cyan: #22D3EE;
+    --saas-radius: 14px;
+    --saas-shadow: 0 18px 50px rgba(2, 6, 23, 0.32);
+}
+
+.stApp {
+    background:
+        radial-gradient(circle at 8% 0%, rgba(96, 165, 250, 0.12), transparent 24%),
+        radial-gradient(circle at 92% 5%, rgba(52, 211, 153, 0.09), transparent 22%),
+        linear-gradient(135deg, #0B0F15 0%, #111827 48%, #0B0F15 100%) !important;
+}
+
+.block-container {
+    padding-top: 1rem !important;
+    max-width: 1480px !important;
+}
+
+h1, h2, h3, p, label, span, div {
+    letter-spacing: 0 !important;
+}
+
+h2, h3 {
+    color: var(--saas-text) !important;
+}
+
+.saas-header,
+.hero,
+.executive-header,
+.copilot-header,
+.workspace-header {
+    min-height: unset !important;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.70), rgba(15, 23, 42, 0.74)) !important;
+    border: 1px solid var(--saas-border) !important;
+    border-radius: var(--saas-radius) !important;
+    padding: 0.85rem 1rem !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 14px 36px rgba(2, 6, 23, 0.20) !important;
+}
+
+.saas-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+}
+
+.saas-header-main {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.saas-header-icon {
+    width: 2.45rem;
+    height: 2.45rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(96, 165, 250, 0.14);
+    border: 1px solid rgba(96, 165, 250, 0.24);
+    font-size: 1.15rem;
+}
+
+.saas-eyebrow {
+    color: var(--saas-blue);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.06em !important;
+}
+
+.saas-header h1,
+.executive-header h1,
+.copilot-header h1,
+.workspace-header h1 {
+    margin: 0.05rem 0 0.1rem !important;
+    font-size: clamp(1.55rem, 2.1vw, 2.05rem) !important;
+    line-height: 1.12 !important;
+}
+
+.saas-header p,
+.hero p,
+.executive-header p,
+.copilot-header p,
+.workspace-header p {
+    color: var(--saas-muted) !important;
+    margin: 0 !important;
+    font-size: 0.93rem !important;
+}
+
+.saas-header-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.saas-header-meta span {
+    color: var(--saas-muted);
+    border: 1px solid var(--saas-border);
+    background: rgba(15, 23, 42, 0.52);
+    border-radius: 999px;
+    padding: 0.34rem 0.62rem;
+    font-size: 0.78rem;
+}
+
+.saas-kpi,
+.kpi-card,
+.executive-kpi,
+.signal-card,
+.metric-card {
+    min-height: 132px !important;
+    background: linear-gradient(150deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.92)) !important;
+    border: 1px solid var(--saas-border) !important;
+    border-radius: var(--saas-radius) !important;
+    padding: 0.95rem !important;
+    box-shadow: 0 12px 34px rgba(2, 6, 23, 0.20) !important;
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease !important;
+}
+
+.saas-kpi:hover,
+.kpi-card:hover,
+.executive-kpi:hover,
+.signal-card:hover,
+.metric-card:hover,
+.lead-card:hover,
+.workspace-panel:hover,
+.executive-panel:hover,
+.copilot-panel:hover,
+.ai-card:hover,
+.intel-card:hover,
+.stPlotlyChart:hover {
+    transform: translateY(-2px);
+    border-color: var(--saas-border-strong) !important;
+    box-shadow: var(--saas-shadow) !important;
+}
+
+.saas-kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.saas-kpi-icon {
+    width: 2.05rem;
+    height: 2.05rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(96, 165, 250, 0.14);
+    border: 1px solid rgba(96, 165, 250, 0.22);
+}
+
+.saas-trend,
+.saas-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    border-radius: 999px;
+    padding: 0.24rem 0.5rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    border: 1px solid rgba(226, 232, 240, 0.10);
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--saas-muted);
+    white-space: nowrap;
+}
+
+.saas-kpi-metric {
+    color: var(--saas-text);
+    font-size: clamp(1.42rem, 2.2vw, 2rem);
+    font-weight: 800;
+    line-height: 1.08;
+    margin-top: 0.8rem;
+}
+
+.saas-kpi-label,
+.metric-value,
+.signal-value {
+    color: var(--saas-text) !important;
+    font-weight: 800 !important;
+}
+
+.saas-kpi-label {
+    margin-top: 0.28rem;
+    font-size: 0.86rem;
+}
+
+.saas-kpi-description,
+.metric-label,
+.signal-label,
+.ai-card-rationale,
+.intel-body,
+.muted {
+    color: var(--saas-muted) !important;
+}
+
+.saas-kpi-description {
+    font-size: 0.78rem;
+    margin-top: 0.28rem;
+}
+
+.saas-kpi-positive .saas-kpi-icon,
+.saas-badge-positive,
+.saas-badge-hot,
+.saas-badge-high,
+.saas-badge-won,
+.saas-badge-qualified {
+    background: rgba(52, 211, 153, 0.16);
+    color: #BBF7D0;
+    border-color: rgba(52, 211, 153, 0.30);
+}
+
+.saas-kpi-warning .saas-kpi-icon,
+.saas-badge-warning,
+.saas-badge-warm,
+.saas-badge-medium,
+.saas-badge-proposal,
+.saas-badge-negotiation {
+    background: rgba(251, 191, 36, 0.15);
+    color: #FDE68A;
+    border-color: rgba(251, 191, 36, 0.28);
+}
+
+.saas-kpi-risk .saas-kpi-icon,
+.saas-badge-risk,
+.saas-badge-cold,
+.saas-badge-low,
+.saas-badge-lost {
+    background: rgba(251, 113, 133, 0.14);
+    color: #FECDD3;
+    border-color: rgba(251, 113, 133, 0.28);
+}
+
+.saas-badge-info,
+.saas-badge-new,
+.saas-badge-contacted,
+.saas-badge-neutral {
+    background: rgba(96, 165, 250, 0.14);
+    color: #BFDBFE;
+    border-color: rgba(96, 165, 250, 0.25);
+}
+
+.saas-section-heading {
+    margin: 1.1rem 0 0.55rem;
+}
+
+.saas-section-heading h2 {
+    font-size: 1.05rem !important;
+    margin: 0 !important;
+}
+
+.saas-section-heading p {
+    color: var(--saas-muted);
+    margin: 0.16rem 0 0;
+    font-size: 0.84rem;
+}
+
+.saas-card,
+.executive-panel,
+.copilot-panel,
+.workspace-panel,
+.ai-card,
+.intel-card,
+.lead-summary,
+.pipeline-stage,
+.lead-card,
+.outreach-box,
+[data-testid="stDataFrame"],
+.stPlotlyChart {
+    background: linear-gradient(150deg, rgba(17, 24, 39, 0.92), rgba(15, 23, 42, 0.88)) !important;
+    border: 1px solid var(--saas-border) !important;
+    border-radius: var(--saas-radius) !important;
+    box-shadow: 0 14px 36px rgba(2, 6, 23, 0.18) !important;
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease !important;
+}
+
+.stPlotlyChart {
+    padding: 0.75rem !important;
+}
+
+.saas-card {
+    padding: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+
+.saas-card-title {
+    color: var(--saas-text);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase;
+}
+
+.saas-card-body {
+    color: var(--saas-muted);
+    margin-top: 0.55rem;
+    line-height: 1.5;
+}
+
+.saas-progress,
+.confidence,
+.progress {
+    height: 8px !important;
+    background: rgba(226, 232, 240, 0.10) !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+}
+
+.saas-progress {
+    margin-top: 0.62rem;
+}
+
+.saas-progress-fill,
+.confidence-fill,
+.progress-fill {
+    height: 8px !important;
+    background: linear-gradient(90deg, var(--saas-blue), var(--saas-green)) !important;
+    border-radius: 999px !important;
+}
+
+.sidebar-filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0.85rem;
+    color: var(--saas-text);
+    font-weight: 800;
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, rgba(9, 13, 20, 0.98), rgba(15, 23, 42, 0.96)) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] {
+    border: 1px solid var(--saas-border) !important;
+    border-radius: 12px !important;
+    background: rgba(15, 23, 42, 0.46) !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.stButton > button,
+[data-testid="baseButton-secondary"] {
+    border-radius: 10px !important;
+    border: 1px solid rgba(96, 165, 250, 0.28) !important;
+    background: rgba(96, 165, 250, 0.11) !important;
+    color: var(--saas-text) !important;
+    transition: transform 140ms ease, border-color 140ms ease, background 140ms ease !important;
+}
+
+.stButton > button:hover,
+[data-testid="baseButton-secondary"]:hover {
+    transform: translateY(-1px);
+    border-color: rgba(96, 165, 250, 0.58) !important;
+    background: rgba(96, 165, 250, 0.18) !important;
+}
+
+.lead-card {
+    border-left: 3px solid var(--saas-blue) !important;
+}
+
+.score-pill {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.score-pill strong {
+    color: var(--saas-text);
+    font-size: 1.18rem;
+}
+
+@media (max-width: 900px) {
+    .saas-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .saas-header-meta {
+        justify-content: flex-start;
+    }
+}
+</style>
+"""
+
+
+DARK_THEME_CSS = DARK_THEME_CSS + PREMIUM_SAAS_CSS
+EXECUTIVE_THEME_CSS = EXECUTIVE_THEME_CSS + PREMIUM_SAAS_CSS
+COPILOT_THEME_CSS = COPILOT_THEME_CSS + PREMIUM_SAAS_CSS
+WORKSPACE_THEME_CSS = WORKSPACE_THEME_CSS + PREMIUM_SAAS_CSS

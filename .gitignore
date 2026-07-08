@@ -15,6 +15,7 @@ env/
 .ruff_cache/
 .coverage
 htmlcov/
+screenshots/
 
 # OS / editor
 .DS_Store

@@ -10,6 +10,7 @@ from src.data.loader import load_leads
 from src.outreach.generator import generate_outreach_for_lead
 from src.scoring.engine import score_leads
 from src.scoring.metrics import apply_pipeline_probability
+from src.ui.components import badge, kpi_card, money, page_header, section_heading
 from src.ui.theme import WORKSPACE_THEME_CSS
 from src.workspace.lead_workspace import (
     enrich_workspace_leads,
@@ -62,11 +63,12 @@ def _render_metric(label: str, value: str, progress: int | None = None) -> None:
             <div class="progress-fill" style="width:{max(0, min(100, progress))}%;"></div>
         </div>
         """
+    value_markup = value if str(value).startswith("<") else _escape(value)
     st.markdown(
         f"""
         <div class="metric-card">
             <div class="metric-label">{_escape(label)}</div>
-            <div class="metric-value">{_escape(value)}</div>
+            <div class="metric-value">{value_markup}</div>
             {progress_markup}
         </div>
         """,
@@ -91,7 +93,7 @@ def _render_intel_card(card: CopilotCard) -> None:
 
 
 def _render_overview(row: pd.Series) -> None:
-    st.subheader("Company Overview")
+    section_heading("Company Overview", "Account context, ownership, and acquisition source.")
     fields = [
         ("Company", row["company"]),
         ("Contact", row["contact_name"]),
@@ -109,16 +111,16 @@ def _render_overview(row: pd.Series) -> None:
 
 
 def _render_deal_profile(row: pd.Series, analysis: SalesCopilotAnalysis) -> None:
-    st.subheader("Deal Profile")
+    section_heading("Deal Profile", "Value, stage, urgency, score, probability, and timing.")
     cols = st.columns(4)
     with cols[0]:
-        _render_metric("Estimated Deal Value", _money(float(row["deal_value"])))
+        kpi_card("◈", money(float(row["deal_value"])), "Estimated Deal Value", "Open opportunity", "● Value", "neutral")
     with cols[1]:
-        _render_metric("Pipeline Stage", str(row["stage"]))
+        _render_metric("Pipeline Stage", badge(str(row["stage"])))
     with cols[2]:
-        _render_metric("Urgency", str(row["urgency_level"]))
+        _render_metric("Urgency", badge(str(row["urgency_level"])))
     with cols[3]:
-        _render_metric("Lead Label", str(row["lead_label"]), int(row["lead_score"]))
+        _render_metric("Lead Label", badge(str(row["lead_label"])), int(row["lead_score"]))
 
     cols = st.columns(4)
     with cols[0]:
@@ -136,7 +138,7 @@ def _card_by_title(analysis: SalesCopilotAnalysis, title: str) -> CopilotCard:
 
 
 def _render_insights(analysis: SalesCopilotAnalysis) -> None:
-    st.subheader("AI-Style Insight Panel")
+    section_heading("AI-Style Insight Panel", "Reused deterministic Copilot guidance for the selected account.")
     cards = [
         _card_by_title(analysis, "Why this lead is valuable"),
         _card_by_title(analysis, "Biggest risks"),
@@ -161,7 +163,7 @@ def _render_insights(analysis: SalesCopilotAnalysis) -> None:
 
 
 def _render_outreach(row: pd.Series) -> None:
-    st.subheader("Outreach Preview")
+    section_heading("Outreach Preview", "Executive-tone copy generated from existing deterministic outreach logic.")
     outreach = generate_outreach_for_lead(row, tone="Executive")
     st.markdown(
         f"""
@@ -185,7 +187,7 @@ def _render_outreach(row: pd.Series) -> None:
 
 
 def _render_actions(row: pd.Series, analysis: SalesCopilotAnalysis) -> None:
-    st.subheader("Recommended Actions")
+    section_heading("Recommended Actions", "Action plan based on score, urgency, stage, and risk signals.")
     actions = recommend_workspace_actions(row, analysis)
     action_markup = []
     for index, action in enumerate(actions, start=1):
@@ -210,11 +212,11 @@ def _render_selected_header(row: pd.Series, analysis: SalesCopilotAnalysis) -> N
             <h2>{_escape(row['company'])}</h2>
             <div class="muted">{_escape(row['contact_name'])} · {_escape(row['industry'])} · Owned by {_escape(row['lead_owner'])}</div>
             <div class="badge-row">
-                <span class="badge">{_escape(row['lead_label'])}</span>
-                <span class="badge">Score {int(row['lead_score'])}</span>
-                <span class="badge">{_escape(row['stage'])}</span>
-                <span class="badge">{_money(float(row['deal_value']))}</span>
-                <span class="badge">{analysis.deal_probability}% probability</span>
+                {badge(row['lead_label'])}
+                {badge(f"Score {int(row['lead_score'])}", "info")}
+                {badge(row['stage'])}
+                {badge(_money(float(row['deal_value'])), "neutral")}
+                {badge(f"{analysis.deal_probability}% probability", "high")}
             </div>
         </div>
         """,
@@ -224,22 +226,18 @@ def _render_selected_header(row: pd.Series, analysis: SalesCopilotAnalysis) -> N
 
 def render_lead_intelligence_workspace() -> None:
     st.markdown(WORKSPACE_THEME_CSS, unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="workspace-header">
-            <div class="workspace-eyebrow">Lead Intelligence Command Center</div>
-            <h1>Lead Intelligence Workspace</h1>
-            <p>Search, inspect, prioritize, and act on pipeline opportunities from a focused CRM workspace.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
     leads = _load_workspace_leads()
+    page_header(
+        "Lead Intelligence Workspace",
+        "Search, inspect, prioritize, and act on pipeline opportunities from a focused CRM command center.",
+        len(leads),
+        "🧠",
+    )
     left_col, right_col = st.columns([0.36, 0.64], gap="large")
 
     with left_col:
-        st.subheader("Lead List")
+        section_heading("Lead List", "Search by company, contact, industry, or owner.")
         query = st.text_input("Search leads", placeholder="Company, contact, industry, or owner")
         filtered = search_workspace_leads(leads, query)
         st.caption(f"{len(filtered)} leads found")

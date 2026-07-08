@@ -4,20 +4,33 @@ import pandas as pd
 
 STAGE_ORDER = ["New", "Qualified", "Proposal", "Negotiation"]
 CRM_STAGE_ORDER = ["New", "Contacted", "Qualified", "Proposal", "Won", "Lost"]
-EXECUTIVE_COLORS = ["#D6A94A", "#2CB67D", "#4D96FF", "#FF7A59", "#8B8CF6", "#24C6DC", "#A3E635"]
+SAAS_COLORS = ["#60A5FA", "#34D399", "#FBBF24", "#FB7185", "#A78BFA", "#22D3EE", "#F472B6"]
+EXECUTIVE_COLORS = SAAS_COLORS
 
 
 def _executive_layout(fig, showlegend: bool = True):
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font={"family": "Space Grotesk, sans-serif", "color": "#F5F1E8"},
-        margin={"l": 24, "r": 24, "t": 58, "b": 28},
+        font={"family": "Space Grotesk, sans-serif", "color": "#F8FAFC", "size": 14},
+        title={"font": {"size": 18, "color": "#F8FAFC"}, "x": 0.02, "xanchor": "left"},
+        margin={"l": 28, "r": 24, "t": 50, "b": 28},
         legend_title_text="",
         showlegend=showlegend,
+        legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
     )
-    fig.update_xaxes(gridcolor="rgba(245,241,232,0.08)", zerolinecolor="rgba(245,241,232,0.12)")
-    fig.update_yaxes(gridcolor="rgba(245,241,232,0.08)", zerolinecolor="rgba(245,241,232,0.12)")
+    fig.update_xaxes(
+        gridcolor="rgba(226,232,240,0.08)",
+        zerolinecolor="rgba(226,232,240,0.12)",
+        tickfont={"size": 12, "color": "rgba(226,232,240,0.78)"},
+        title_font={"size": 13, "color": "rgba(226,232,240,0.72)"},
+    )
+    fig.update_yaxes(
+        gridcolor="rgba(226,232,240,0.08)",
+        zerolinecolor="rgba(226,232,240,0.12)",
+        tickfont={"size": 12, "color": "rgba(226,232,240,0.78)"},
+        title_font={"size": 13, "color": "rgba(226,232,240,0.72)"},
+    )
     return fig
 
 
@@ -35,17 +48,11 @@ def pipeline_by_stage_chart(df: pd.DataFrame):
         y="deal_value",
         title="Pipeline Value by Stage",
         color="stage",
-        color_discrete_sequence=["#23A6D5", "#00B894", "#F4B942", "#FF6B6B"],
+        color_discrete_sequence=SAAS_COLORS,
         labels={"stage": "Stage", "deal_value": "Pipeline Value (USD)"},
     )
 
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={"family": "Space Grotesk, sans-serif", "color": "#E9F0F7"},
-        margin={"l": 20, "r": 20, "t": 56, "b": 20},
-        legend_title_text="",
-    )
+    _executive_layout(fig, showlegend=False)
     fig.update_yaxes(tickprefix="$", separatethousands=True)
     return fig
 
@@ -70,16 +77,10 @@ def lead_score_distribution_chart(df: pd.DataFrame):
         y="lead_count",
         title="Lead Score Distribution",
         color="score_bucket",
-        color_discrete_sequence=["#44506A", "#3E7CB1", "#00B894", "#F4B942"],
+        color_discrete_sequence=SAAS_COLORS,
         labels={"score_bucket": "Score Range", "lead_count": "Leads"},
     )
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={"family": "Space Grotesk, sans-serif", "color": "#E9F0F7"},
-        margin={"l": 20, "r": 20, "t": 56, "b": 20},
-        showlegend=False,
-    )
+    _executive_layout(fig, showlegend=False)
     return fig
 
 
@@ -100,16 +101,10 @@ def pipeline_funnel_chart(df: pd.DataFrame):
         x="lead_count",
         title="CRM Pipeline Funnel",
         color="crm_stage",
-        color_discrete_sequence=["#6C8EEF", "#23A6D5", "#00B894", "#F4B942", "#5CD67C", "#E76F51"],
+        color_discrete_sequence=SAAS_COLORS,
         labels={"crm_stage": "Stage", "lead_count": "Lead Count"},
     )
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={"family": "Space Grotesk, sans-serif", "color": "#E9F0F7"},
-        margin={"l": 20, "r": 20, "t": 56, "b": 20},
-        showlegend=False,
-    )
+    _executive_layout(fig, showlegend=False)
     return fig
 
 
@@ -246,7 +241,7 @@ def monthly_pipeline_trend_chart(df: pd.DataFrame):
         color="metric",
         markers=True,
         title="Monthly Pipeline Trend",
-        color_discrete_sequence=["#D6A94A", "#2CB67D"],
+        color_discrete_sequence=["#60A5FA", "#34D399"],
         labels={"pipeline_month": "Month", "value": "Value", "metric": ""},
     )
     fig.update_yaxes(tickprefix="$", separatethousands=True)

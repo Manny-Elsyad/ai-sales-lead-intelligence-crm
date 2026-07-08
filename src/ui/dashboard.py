@@ -12,6 +12,7 @@ from src.pipeline.service import (
 )
 from src.scoring.engine import score_leads
 from src.scoring.metrics import apply_pipeline_probability, summarize_kpis
+from src.ui.components import badge, kpi_card, money, page_header, section_heading, sidebar_filter_header
 from src.ui.theme import DARK_THEME_CSS
 from src.visualizations.charts import (
     lead_score_distribution_chart,
@@ -28,24 +29,52 @@ st.set_page_config(
 
 
 def _apply_filters(df: pd.DataFrame) -> pd.DataFrame:
-    st.sidebar.header("Filters")
+    industry_options = sorted(df["industry"].unique())
+    stage_options = sorted(df["stage"].unique())
+    owner_options = sorted(df["lead_owner"].unique())
 
-    industries = st.sidebar.multiselect(
-        "Industry",
-        options=sorted(df["industry"].unique()),
-        default=sorted(df["industry"].unique()),
-    )
-    stages = st.sidebar.multiselect(
-        "Stage",
-        options=sorted(df["stage"].unique()),
-        default=sorted(df["stage"].unique()),
-    )
-    owners = st.sidebar.multiselect(
-        "Lead Owner",
-        options=sorted(df["lead_owner"].unique()),
-        default=sorted(df["lead_owner"].unique()),
-    )
-    min_score = st.sidebar.slider("Minimum Lead Score", min_value=0, max_value=100, value=60)
+    reset = st.sidebar.button("Reset Filters", use_container_width=True, key="dashboard_reset")
+    if reset:
+        st.session_state["dashboard_industries"] = industry_options
+        st.session_state["dashboard_stages"] = stage_options
+        st.session_state["dashboard_owners"] = owner_options
+        st.session_state["dashboard_min_score"] = 60
+
+    active_count = 0
+    active_count += int(st.session_state.get("dashboard_industries", industry_options) != industry_options)
+    active_count += int(st.session_state.get("dashboard_stages", stage_options) != stage_options)
+    active_count += int(st.session_state.get("dashboard_owners", owner_options) != owner_options)
+    active_count += int(st.session_state.get("dashboard_min_score", 60) != 60)
+    sidebar_filter_header(active_count)
+
+    with st.sidebar.expander("🏢 Market", expanded=True):
+        industries = st.multiselect(
+            "Industry",
+            options=industry_options,
+            default=industry_options,
+            key="dashboard_industries",
+        )
+    with st.sidebar.expander("🧭 Pipeline", expanded=True):
+        stages = st.multiselect(
+            "Stage",
+            options=stage_options,
+            default=stage_options,
+            key="dashboard_stages",
+        )
+        min_score = st.slider(
+            "Minimum Lead Score",
+            min_value=0,
+            max_value=100,
+            value=60,
+            key="dashboard_min_score",
+        )
+    with st.sidebar.expander("👤 Ownership", expanded=False):
+        owners = st.multiselect(
+            "Lead Owner",
+            options=owner_options,
+            default=owner_options,
+            key="dashboard_owners",
+        )
 
     filtered = df[
         (df["industry"].isin(industries))
@@ -60,25 +89,15 @@ def _render_kpis(kpis: dict[str, float]) -> None:
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Total Leads", f"{kpis['total_leads']:,}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        kpi_card("◎", f"{kpis['total_leads']:,}", "Total Leads", "Filtered active records", "● Live", "neutral")
     with c2:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Pipeline", f"${kpis['total_pipeline']:,.0f}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        kpi_card("◈", money(kpis["total_pipeline"]), "Pipeline", "Total opportunity value", "▲ Forecast", "positive")
     with c3:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Weighted Pipeline", f"${kpis['weighted_pipeline']:,.0f}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        kpi_card("◆", money(kpis["weighted_pipeline"]), "Weighted Pipeline", "Probability-adjusted value", "▲ Expected", "positive")
     with c4:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Avg Lead Score", f"{kpis['avg_lead_score']:.1f}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        kpi_card("◉", f"{kpis['avg_lead_score']:.1f}", "Avg Lead Score", "Fit and engagement quality", "● Quality", "warning", kpis["avg_lead_score"])
     with c5:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
-        st.metric("Hot Leads", f"{kpis['hot_leads']:,}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        kpi_card("▲", f"{kpis['hot_leads']:,}", "Hot Leads", "Priority accounts", "▲ Priority", "positive")
 
 
 def _render_outreach_generator(df: pd.DataFrame) -> None:
@@ -124,11 +143,13 @@ def _render_lead_card(row: pd.Series) -> None:
     st.markdown(
         f"""
         <div class='lead-card'>
-            <div><strong>{row['company']}</strong></div>
-            <div style='font-size:0.85rem; opacity:0.9;'>{row['industry']}</div>
-            <div style='font-size:0.85rem;'>Score: {int(row['lead_score'])} ({row['lead_label']})</div>
-            <div style='font-size:0.85rem;'>Deal: ${row['deal_value']:,.0f}</div>
-            <div style='font-size:0.85rem;'>Urgency: {row['urgency_level']}</div>
+            <div style='display:flex; justify-content:space-between; gap:0.5rem; align-items:flex-start;'>
+                <strong>{row['company']}</strong>
+                {badge(row['lead_label'])}
+            </div>
+            <div style='font-size:0.82rem; opacity:0.82; margin-top:0.25rem;'>{row['industry']} · {badge(row['stage'])}</div>
+            <div style='font-size:0.85rem; margin-top:0.45rem;'>Score <strong>{int(row['lead_score'])}</strong> · Deal <strong>${row['deal_value']:,.0f}</strong></div>
+            <div style='font-size:0.82rem; margin-top:0.25rem;'>Urgency {badge(row['urgency_level'])}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -184,15 +205,6 @@ def _render_crm_pipeline(df: pd.DataFrame) -> None:
 
 def render_dashboard() -> None:
     st.markdown(DARK_THEME_CSS, unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class='hero'>
-            <h2 style='margin-bottom:0.3rem;'>Executive Lead Intelligence Dashboard</h2>
-            <p style='margin-bottom:0;'>Track qualified pipeline, monitor sales momentum, and prioritize high-fit B2B opportunities.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
     leads = load_leads()
     leads = score_leads(leads)
@@ -200,9 +212,16 @@ def render_dashboard() -> None:
     filtered_leads = _apply_filters(leads)
     kpis = summarize_kpis(filtered_leads)
 
+    page_header(
+        "Executive Lead Intelligence Dashboard",
+        "Track qualified pipeline, revenue momentum, and high-fit B2B opportunities.",
+        len(filtered_leads),
+        "📈",
+    )
+
     _render_kpis(kpis)
 
-    st.subheader("Pipeline Analytics")
+    section_heading("Pipeline Analytics", "Stage value and score quality across the filtered pipeline.")
     chart_col_1, chart_col_2 = st.columns(2)
     with chart_col_1:
         stage_fig = pipeline_by_stage_chart(filtered_leads)
@@ -211,7 +230,7 @@ def render_dashboard() -> None:
         score_fig = lead_score_distribution_chart(filtered_leads)
         st.plotly_chart(score_fig, use_container_width=True)
 
-    st.subheader("Lead Portfolio")
+    section_heading("Lead Portfolio", "Highest-signal leads are shown as cards with the full editable view preserved below.")
     table_columns = [
         "lead_id",
         "company",
@@ -222,6 +241,7 @@ def render_dashboard() -> None:
         "deal_value",
         "lead_score",
         "lead_label",
+        "urgency_level",
         "weighted_value",
         "last_contact_date",
         "next_step",
@@ -234,22 +254,28 @@ def render_dashboard() -> None:
         by=["lead_score", "deal_value"], ascending=[False, False]
     )
 
-    st.data_editor(
-        display_df,
-        use_container_width=True,
-        hide_index=True,
-        disabled=True,
-        column_config={
-            "deal_value": st.column_config.NumberColumn("Deal Value", format="$%d"),
-            "weighted_value": st.column_config.NumberColumn("Weighted Value", format="$%d"),
-            "lead_score": st.column_config.NumberColumn("Lead Score", format="%d"),
-            "last_contact_date": st.column_config.DateColumn("Last Contact"),
-            "lead_label": st.column_config.TextColumn("Score Label"),
-            "score_explanation": st.column_config.TextColumn("Score Summary"),
-            "strongest_positive_signals": st.column_config.TextColumn("Positive Signals"),
-            "biggest_risks": st.column_config.TextColumn("Risks"),
-        },
-    )
+    card_cols = st.columns(4)
+    for index, (_, row) in enumerate(display_df.head(8).iterrows()):
+        with card_cols[index % 4]:
+            _render_lead_card(row)
+
+    with st.expander("Open full lead portfolio", expanded=False):
+        st.data_editor(
+            display_df,
+            use_container_width=True,
+            hide_index=True,
+            disabled=True,
+            column_config={
+                "deal_value": st.column_config.NumberColumn("Deal Value", format="$%d"),
+                "weighted_value": st.column_config.NumberColumn("Weighted Value", format="$%d"),
+                "lead_score": st.column_config.ProgressColumn("Lead Score", min_value=0, max_value=100),
+                "last_contact_date": st.column_config.DateColumn("Last Contact"),
+                "lead_label": st.column_config.TextColumn("Score Label"),
+                "score_explanation": st.column_config.TextColumn("Score Summary"),
+                "strongest_positive_signals": st.column_config.TextColumn("Positive Signals"),
+                "biggest_risks": st.column_config.TextColumn("Risks"),
+            },
+        )
 
     st.caption(f"Showing {len(display_df)} leads after filters.")
     _render_outreach_generator(filtered_leads)

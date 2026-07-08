@@ -7,6 +7,7 @@ from src.copilot.analysis import SalesCopilotAnalysis, generate_sales_copilot_an
 from src.data.loader import load_leads
 from src.scoring.engine import score_leads
 from src.scoring.metrics import apply_pipeline_probability
+from src.ui.components import badge, kpi_card, page_header, section_heading, sidebar_filter_header
 from src.ui.theme import COPILOT_THEME_CSS
 
 
@@ -89,27 +90,27 @@ def _render_ai_card(title: str, answer: str, rationale: str, confidence: int) ->
 
 
 def _render_lead_snapshot(row: pd.Series) -> None:
-    st.subheader("Lead Snapshot")
+    section_heading("Lead Snapshot", "Selected account context and qualification signals.")
     cols = st.columns(5)
     with cols[0]:
-        _render_signal("Deal Value", _money(float(row["deal_value"])))
+        kpi_card("◈", _money(float(row["deal_value"])), "Deal Value", "Estimated opportunity", "● Value", "neutral")
     with cols[1]:
-        _render_signal("Stage", str(row["stage"]))
+        _render_signal("Stage", badge(str(row["stage"])))
     with cols[2]:
-        _render_signal("Lead Score", f"{int(row['lead_score'])}")
+        kpi_card("▲", f"{int(row['lead_score'])}", "Lead Score", str(row["lead_label"]), "● Quality", "warning", int(row["lead_score"]))
     with cols[3]:
-        _render_signal("Engagement", f"{int(row['engagement_score'])}")
+        kpi_card("◉", f"{int(row['engagement_score'])}", "Engagement", "Buyer activity", "● Signal", "positive", int(row["engagement_score"]))
     with cols[4]:
         _render_signal("Days in Pipeline", f"{int(row['days_in_pipeline'])}")
 
 
 def _render_copilot_signals(analysis: SalesCopilotAnalysis) -> None:
-    st.subheader("Copilot Signals")
+    section_heading("Copilot Signals", "Deterministic recommendations refreshed from the selected lead.")
     cols = st.columns(5)
     with cols[0]:
-        _render_signal("Buying Intent", analysis.buying_intent, analysis.confidence)
+        _render_signal("Buying Intent", badge(analysis.buying_intent), analysis.confidence)
     with cols[1]:
-        _render_signal("Deal Probability", f"{analysis.deal_probability}%", analysis.confidence)
+        kpi_card("◆", f"{analysis.deal_probability}%", "Deal Probability", "Rule-based close likelihood", "▲ Model", "positive", analysis.deal_probability)
     with cols[2]:
         _render_signal("Time to Close", analysis.estimated_time_to_close)
     with cols[3]:
@@ -119,7 +120,7 @@ def _render_copilot_signals(analysis: SalesCopilotAnalysis) -> None:
 
 
 def _render_cards(analysis: SalesCopilotAnalysis) -> None:
-    st.subheader("AI Analysis")
+    section_heading("AI Analysis", "AI-style guidance without external LLM calls.")
     card_columns = st.columns(2)
     for index, card in enumerate(analysis.cards):
         with card_columns[index % 2]:
@@ -127,7 +128,7 @@ def _render_cards(analysis: SalesCopilotAnalysis) -> None:
 
 
 def _render_agenda(analysis: SalesCopilotAnalysis) -> None:
-    st.subheader("Suggested Meeting Agenda")
+    section_heading("Suggested Meeting Agenda")
     st.markdown("<div class='copilot-panel'>", unsafe_allow_html=True)
     for item in analysis.meeting_agenda:
         st.markdown(f"- {item}")
@@ -135,7 +136,7 @@ def _render_agenda(analysis: SalesCopilotAnalysis) -> None:
 
 
 def _render_objections(analysis: SalesCopilotAnalysis) -> None:
-    st.subheader("Objection Handling")
+    section_heading("Objection Handling", "Likely objections and recommended responses.")
     st.markdown("<div class='copilot-panel'>", unsafe_allow_html=True)
     for objection in analysis.objections:
         st.markdown(
@@ -153,24 +154,18 @@ def _render_objections(analysis: SalesCopilotAnalysis) -> None:
 
 def render_ai_sales_copilot() -> None:
     st.markdown(COPILOT_THEME_CSS, unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="copilot-header">
-            <div class="copilot-eyebrow">Deterministic AI-Style Guidance</div>
-            <h1>AI Sales Copilot</h1>
-            <p>Lead-level sales intelligence with rule-based recommendations, confidence indicators, and next-step coaching.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
     leads = _load_scored_leads()
+    sidebar_filter_header(1)
     selected_label = st.sidebar.selectbox("Select Lead", options=_lead_options(leads), index=0)
     selected = _selected_lead(leads, selected_label)
     analysis = generate_sales_copilot_analysis(selected)
 
-    st.caption(
-        f"Selected {analysis.company} ({analysis.lead_id}) · {selected['industry']} · {selected['lead_owner']}"
+    page_header(
+        "AI Sales Copilot",
+        f"Selected {analysis.company} ({analysis.lead_id}) · {selected['industry']} · {selected['lead_owner']}",
+        len(leads),
+        "🤖",
     )
     _render_lead_snapshot(selected)
     _render_copilot_signals(analysis)
