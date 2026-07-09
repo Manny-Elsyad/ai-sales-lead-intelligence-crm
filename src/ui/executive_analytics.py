@@ -25,11 +25,6 @@ st.set_page_config(
 )
 
 
-def _render_plotly_chart(fig) -> None:
-    if fig is not None:
-        st.plotly_chart(fig, use_container_width=True)
-
-
 def _money(value: float) -> str:
     return f"${value:,.0f}"
 
@@ -189,23 +184,23 @@ def render_executive_analytics() -> None:
     section_heading("Visualizations", "Sales funnel is prioritized, with revenue mix and stage quality below.")
     funnel_col, industry_col = st.columns([1.25, 0.75])
     with funnel_col:
-        _render_plotly_chart(executive_sales_funnel_chart(filtered))
+        st.plotly_chart(executive_sales_funnel_chart(filtered), use_container_width=True)
     with industry_col:
-        _render_plotly_chart(revenue_by_industry_chart(filtered))
+        st.plotly_chart(revenue_by_industry_chart(filtered), use_container_width=True)
 
     source_col, stage_col = st.columns([1, 1])
     with source_col:
-        _render_plotly_chart(revenue_by_source_chart(filtered))
+        st.plotly_chart(revenue_by_source_chart(filtered), use_container_width=True)
     with stage_col:
-        _render_plotly_chart(pipeline_stage_breakdown_chart(filtered))
+        st.plotly_chart(pipeline_stage_breakdown_chart(filtered), use_container_width=True)
 
     score_col, trend_col = st.columns([1, 1])
     with score_col:
-        _render_plotly_chart(executive_lead_score_distribution_chart(filtered))
+        st.plotly_chart(executive_lead_score_distribution_chart(filtered), use_container_width=True)
     with trend_col:
-        _render_plotly_chart(monthly_pipeline_trend_chart(filtered))
+        st.plotly_chart(monthly_pipeline_trend_chart(filtered), use_container_width=True)
 
-    _render_plotly_chart(top_opportunities_chart(filtered))
+    st.plotly_chart(top_opportunities_chart(filtered), use_container_width=True)
 
     _render_executive_brief(filtered)
 

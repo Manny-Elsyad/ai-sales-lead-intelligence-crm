@@ -1,6 +1,4 @@
-from importlib import import_module
-from typing import Any, Optional
-
+import plotly.express as px
 import pandas as pd
 
 
@@ -8,26 +6,6 @@ STAGE_ORDER = ["New", "Qualified", "Proposal", "Negotiation"]
 CRM_STAGE_ORDER = ["New", "Contacted", "Qualified", "Proposal", "Won", "Lost"]
 SAAS_COLORS = ["#60A5FA", "#34D399", "#FBBF24", "#FB7185", "#A78BFA", "#22D3EE", "#F472B6"]
 EXECUTIVE_COLORS = SAAS_COLORS
-
-
-def _chart_unavailable(chart_name: str, error: Exception) -> None:
-    try:
-        import streamlit as st
-
-        st.warning(
-            f"{chart_name} is temporarily unavailable because Plotly could not be loaded. "
-            "The rest of the dashboard is still available."
-        )
-    except Exception:
-        return
-
-
-def _plotly_express(chart_name: str) -> Optional[Any]:
-    try:
-        return import_module("plotly.express")
-    except Exception as error:
-        _chart_unavailable(chart_name, error)
-        return None
 
 
 def _executive_layout(fig, showlegend: bool = True):
@@ -57,10 +35,6 @@ def _executive_layout(fig, showlegend: bool = True):
 
 
 def pipeline_by_stage_chart(df: pd.DataFrame):
-    px = _plotly_express("Pipeline Value by Stage")
-    if px is None:
-        return None
-
     grouped = (
         df.groupby("stage", as_index=False)["deal_value"]
         .sum()
@@ -84,10 +58,6 @@ def pipeline_by_stage_chart(df: pd.DataFrame):
 
 
 def lead_score_distribution_chart(df: pd.DataFrame):
-    px = _plotly_express("Lead Score Distribution")
-    if px is None:
-        return None
-
     bins = [0, 25, 50, 75, 101]
     labels = ["0-24", "25-49", "50-74", "75-100"]
 
@@ -115,10 +85,6 @@ def lead_score_distribution_chart(df: pd.DataFrame):
 
 
 def pipeline_funnel_chart(df: pd.DataFrame):
-    px = _plotly_express("CRM Pipeline Funnel")
-    if px is None:
-        return None
-
     grouped = (
         df.groupby("crm_stage", as_index=False)["lead_id"]
         .count()
@@ -143,10 +109,6 @@ def pipeline_funnel_chart(df: pd.DataFrame):
 
 
 def executive_sales_funnel_chart(df: pd.DataFrame):
-    px = _plotly_express("Sales Funnel")
-    if px is None:
-        return None
-
     grouped = (
         df.groupby("stage", as_index=False)
         .agg(lead_count=("lead_id", "count"), deal_value=("deal_value", "sum"))
@@ -170,10 +132,6 @@ def executive_sales_funnel_chart(df: pd.DataFrame):
 
 
 def revenue_by_industry_chart(df: pd.DataFrame):
-    px = _plotly_express("Revenue by Industry")
-    if px is None:
-        return None
-
     grouped = (
         df.groupby("industry", as_index=False)["weighted_value"]
         .sum()
@@ -195,10 +153,6 @@ def revenue_by_industry_chart(df: pd.DataFrame):
 
 
 def revenue_by_source_chart(df: pd.DataFrame):
-    px = _plotly_express("Revenue by Lead Source")
-    if px is None:
-        return None
-
     grouped = (
         df.groupby("source", as_index=False)["weighted_value"]
         .sum()
@@ -218,10 +172,6 @@ def revenue_by_source_chart(df: pd.DataFrame):
 
 
 def pipeline_stage_breakdown_chart(df: pd.DataFrame):
-    px = _plotly_express("Pipeline Stage Breakdown")
-    if px is None:
-        return None
-
     grouped = (
         df.groupby("stage", as_index=False)["deal_value"]
         .sum()
@@ -241,10 +191,6 @@ def pipeline_stage_breakdown_chart(df: pd.DataFrame):
 
 
 def executive_lead_score_distribution_chart(df: pd.DataFrame):
-    px = _plotly_express("Lead Score Distribution")
-    if px is None:
-        return None
-
     bins = [0, 50, 65, 75, 85, 101]
     labels = ["0-49", "50-64", "65-74", "75-84", "85-100"]
 
@@ -271,10 +217,6 @@ def executive_lead_score_distribution_chart(df: pd.DataFrame):
 
 
 def monthly_pipeline_trend_chart(df: pd.DataFrame):
-    px = _plotly_express("Monthly Pipeline Trend")
-    if px is None:
-        return None
-
     trended = df.copy()
     trended["pipeline_month"] = trended["last_contact_date"].dt.to_period("M").dt.to_timestamp()
     grouped = (
@@ -307,10 +249,6 @@ def monthly_pipeline_trend_chart(df: pd.DataFrame):
 
 
 def top_opportunities_chart(df: pd.DataFrame):
-    px = _plotly_express("Top 10 Highest Value Opportunities")
-    if px is None:
-        return None
-
     chart_df = df.sort_values(["deal_value", "lead_score"], ascending=False).head(10)
     fig = px.bar(
         chart_df,

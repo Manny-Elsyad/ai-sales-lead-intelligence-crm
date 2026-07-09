@@ -28,11 +28,6 @@ st.set_page_config(
 )
 
 
-def _render_plotly_chart(fig) -> None:
-    if fig is not None:
-        st.plotly_chart(fig, use_container_width=True)
-
-
 def _apply_filters(df: pd.DataFrame) -> pd.DataFrame:
     industry_options = sorted(df["industry"].unique())
     stage_options = sorted(df["stage"].unique())
@@ -173,7 +168,7 @@ def _render_crm_pipeline(df: pd.DataFrame) -> None:
     c2.metric("Qualified Pipeline Value", f"${summary['qualified_pipeline_value']:,.0f}")
     c3.metric("Won Value", f"${summary['won_value']:,.0f}")
 
-    _render_plotly_chart(pipeline_funnel_chart(crm_df))
+    st.plotly_chart(pipeline_funnel_chart(crm_df), use_container_width=True)
 
     st.markdown("**Average Lead Score by Stage**")
     st.dataframe(
@@ -230,10 +225,10 @@ def render_dashboard() -> None:
     chart_col_1, chart_col_2 = st.columns(2)
     with chart_col_1:
         stage_fig = pipeline_by_stage_chart(filtered_leads)
-        _render_plotly_chart(stage_fig)
+        st.plotly_chart(stage_fig, use_container_width=True)
     with chart_col_2:
         score_fig = lead_score_distribution_chart(filtered_leads)
-        _render_plotly_chart(score_fig)
+        st.plotly_chart(score_fig, use_container_width=True)
 
     section_heading("Lead Portfolio", "Highest-signal leads are shown as cards with the full editable view preserved below.")
     table_columns = [
